@@ -5,8 +5,11 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../lib/firebase';
 import { signOut } from 'firebase/auth';
 
+const ADMIN_EMAIL = 'pal742092@gmail.com';
+
 export default function Layout({ children }) {
   const [user, loading] = useAuthState(auth);
+  const isAdmin = user?.email === ADMIN_EMAIL;
 
   const handleLogout = async () => {
     await signOut(auth);
@@ -37,10 +40,12 @@ export default function Layout({ children }) {
               </Link>
               {user ? (
                 <div className="flex items-center gap-2">
-                  <Link href="/admin" className="flex items-center gap-1 bg-green-600 px-2 py-1 rounded-lg text-sm hover:bg-green-700 transition-colors">
-                    <Settings className="h-4 w-4" />
-                    Admin
-                  </Link>
+                  {isAdmin && (
+                    <Link href="/admin" className="flex items-center gap-1 bg-green-600 px-2 py-1 rounded-lg text-sm hover:bg-green-700 transition-colors">
+                      <Settings className="h-4 w-4" />
+                      Admin
+                    </Link>
+                  )}
                   <div className="flex items-center gap-1 bg-blue-700 px-2 py-1 rounded-lg text-sm">
                     <User className="h-4 w-4" />
                     <span className="max-w-[120px] truncate">{user.email}</span>

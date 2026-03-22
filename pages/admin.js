@@ -4,11 +4,16 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, db, storage } from '../lib/firebase';
 import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { Plus, Trash2, Edit, Package, X, Save, ImagePlus } from 'lucide-react';
+import { Plus, Trash2, Edit, Package, X, Save, ImagePlus, ShieldAlert } from 'lucide-react';
+import Layout from '../components/Layout';
+
+// Only this email can access admin panel
+const ADMIN_EMAIL = 'pal742092@gmail.com';
 
 export default function Admin() {
   const [user, loading] = useAuthState(auth);
   const router = useRouter();
+  const isAdmin = user?.email === ADMIN_EMAIL;
   const [products, setProducts] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
@@ -136,7 +141,38 @@ export default function Admin() {
     return null;
   }
 
+  // Check if user is admin
+  if (!isAdmin) {
+    return (
+      <Layout>
+        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+          <div className="bg-white p-8 rounded-lg shadow-lg text-center max-w-md">
+            <div className="flex justify-center mb-4">
+              <div className="bg-red-100 p-4 rounded-full">
+                <ShieldAlert className="h-12 w-12 text-red-600" />
+              </div>
+            </div>
+            <h1 className="text-2xl font-bold text-gray-800 mb-2">Access Denied</h1>
+            <p className="text-gray-600 mb-4">
+              Aap admin nahi hain. Sirf authorized admin hi is page ko access kar sakte hain.
+            </p>
+            <p className="text-sm text-gray-500 mb-6">
+              Logged in as: {user.email}
+            </p>
+            <button
+              onClick={() => router.push('/')}
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Go to Home
+            </button>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
+    <Layout>
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-blue-800 flex items-center gap-2">
@@ -311,5 +347,6 @@ export default function Admin() {
         )}
       </div>
     </div>
+    </Layout>
   );
 }
