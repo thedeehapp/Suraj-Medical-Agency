@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Footer from './Footer';
-import { LogIn, LogOut, Home, Package, ShieldCheck, Phone, User } from 'lucide-react';
+import { LogIn, LogOut, Home, Package, ShieldCheck, Phone, User, Settings } from 'lucide-react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../lib/firebase';
 import { signOut } from 'firebase/auth';
@@ -37,6 +37,10 @@ export default function Layout({ children }) {
               </Link>
               {user ? (
                 <div className="flex items-center gap-2">
+                  <Link href="/admin" className="flex items-center gap-1 bg-green-600 px-2 py-1 rounded-lg text-sm hover:bg-green-700 transition-colors">
+                    <Settings className="h-4 w-4" />
+                    Admin
+                  </Link>
                   <div className="flex items-center gap-1 bg-blue-700 px-2 py-1 rounded-lg text-sm">
                     <User className="h-4 w-4" />
                     <span className="max-w-[120px] truncate">{user.email}</span>
