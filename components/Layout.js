@@ -1,8 +1,17 @@
 import Link from 'next/link';
 import Footer from './Footer';
-import { LogIn, Home, Package, ShieldCheck, Phone } from 'lucide-react';
+import { LogIn, LogOut, Home, Package, ShieldCheck, Phone, User } from 'lucide-react';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from '../lib/firebase';
+import { signOut } from 'firebase/auth';
 
 export default function Layout({ children }) {
+  const [user, loading] = useAuthState(auth);
+
+  const handleLogout = async () => {
+    await signOut(auth);
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <nav className="bg-blue-800 text-white shadow-md">
@@ -25,10 +34,26 @@ export default function Layout({ children }) {
               <Phone className="h-4 w-4" />
               Contact
             </Link>
-            <Link href="/login" className="flex items-center gap-2 bg-white text-blue-800 px-4 py-2 rounded-lg font-semibold hover:bg-blue-100 transition-colors">
-              <LogIn className="h-4 w-4" />
-              Login
-            </Link>
+            {user ? (
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 bg-blue-700 px-3 py-2 rounded-lg">
+                  <User className="h-4 w-4" />
+                  <span className="text-sm">{user.email}</span>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 bg-white text-blue-800 px-4 py-2 rounded-lg font-semibold hover:bg-blue-100 transition-colors"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <Link href="/login" className="flex items-center gap-2 bg-white text-blue-800 px-4 py-2 rounded-lg font-semibold hover:bg-blue-100 transition-colors">
+                <LogIn className="h-4 w-4" />
+                Login
+              </Link>
+            )}
           </div>
         </div>
       </nav>
